@@ -3,18 +3,12 @@
 REM Activate the conda environment
 call conda activate griduav
 
-echo "Running the Crazyflie controller"
-
-REM Change to the Webots directory
-cd %WEBOTS%
-
-REM Execute the controller script with Webots
-webots-controller.exe %GRIDUAV%\Experiments\SelfLocNewMain.py
-
-REM Change back to the specified home directory
-cd "%GRIDUAV%"
-
-REM Deactivate the conda environment
-call conda deactivate
-
-@echo on
+echo Launching Webots simulation
+start "Webots Simulator" cmd /k "echo This window runs the Webots simulator (SquareBox.wbt). Leave it open while the experiment runs. && "%WEBOTS%\webots.exe" "%GRIDUAV%\Webots\SquareBox.wbt""
+ 
+REM Give Webots a moment to fully open before attaching the controller
+timeout /t 10 /nobreak >nul
+ 
+echo Launching controller
+"%WEBOTS%\webots-controller.exe" "%GRIDUAV%\Experiments\Experiment1.py"
+ 

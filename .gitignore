@@ -1,0 +1,19 @@
+# Data and trained models (excluded from git, stored separately)
+Data/
+Results/
+ 
+# Webots
+*.wbproj
+ 
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.egg-info/
+.eggs/
+
+*:Zone.Identifier
+*.Zone.Identifier
+ 
+# Jupyter
+.ipynb_checkpoints/

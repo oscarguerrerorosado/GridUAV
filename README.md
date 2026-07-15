@@ -41,6 +41,7 @@ GridUAV/
 │   └── SquareBox.wbt            # Webots world file (2x2x2 m cubic environment with Crazyflie UAV)
 │
 ├── .gitignore
+├── requirements.txt 			 # Python dependencies
 └── README.md
 ```
 
