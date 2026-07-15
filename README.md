@@ -50,34 +50,26 @@ GridUAV/
 
 ### 1. Install Webots
 
-This project uses [Webots](https://cyberbotics.com/), an open source 3D robot simulator, to simulate the Crazyflie quadrotor and its environment.
+This project uses Webots, an open source 3D robot simulator, to simulate the Crazyflie quadrotor and its environment.
 
-1. Download and install Webots from the [official releases page](https://github.com/cyberbotics/webots/releases).
+1. Download and install Webots from the [official releases page](https://cyberbotics.com/).
 2. Verify the installation by opening Webots and loading a sample world from `Webots/SquareBox.wbt`.
 
 ### 2. Set Environment Path Variables
 
-The controller scripts in `RobotControl/` need to be able to locate the Webots installation. Set the following environment variables so Webots can find its Python bindings:
+The controller scripts in `RobotControl/` need to be able to locate the Webots installation. Set the following environment variables so Webots can find its Python bindings. Examples:
 
 **Windows**
 ```bat
 setx WEBOTS_HOME "C:\Program Files\Webots"
-setx PYTHONPATH "%WEBOTS_HOME%\lib\controller\python;%PYTHONPATH%"
+setx GRIDUAV "C:\Users\...\Repositories\GridUAV"
 ```
-
-**Linux / macOS**
-```bash
-export WEBOTS_HOME=/usr/local/webots
-export PYTHONPATH=$WEBOTS_HOME/lib/controller/python:$PYTHONPATH
-```
-
-Add these lines to your shell profile (`.bashrc`, `.zshrc`) or to your system environment variables so they persist across sessions.
 
 ### 3. Create the Conda Environment
 
 ```bash
-conda create -n graduav python=3.10
-conda activate graduav
+conda create -n griduav python=3.12.7
+conda activate griduav
 pip install -r requirements.txt
 ```
 

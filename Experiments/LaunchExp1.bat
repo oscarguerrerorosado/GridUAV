@@ -9,10 +9,10 @@ REM Change to the Webots directory
 cd %WEBOTS%
 
 REM Execute the controller script with Webots
-webots-controller.exe %SLcontroller%\SelfLocNewMain.py
+webots-controller.exe %GRIDUAV%\Experiments\SelfLocNewMain.py
 
 REM Change back to the specified home directory
-cd "%SLcontroller%\Webots&Execution\"
+cd "%GRIDUAV%"
 
 REM Deactivate the conda environment
 call conda deactivate
