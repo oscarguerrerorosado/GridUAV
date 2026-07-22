@@ -8,7 +8,7 @@ This repository is under active development. Code and structure will evolve as t
 
 ## Context
 
-This repository stores the code developed by Tom Schwierz for his master thesis project, exploring a biomimetic, grid cell inspired solution for IMU based 3D self localization in aerial robots. The project was supervised by Oscar Guerrero Rosado and Raimon Bullich Vilarrubias.
+This repository stores the code developed by Tom Schwierz for his master thesis project, exploring a biomimetic, grid cell inspired solution for IMU based 3D self localization in aerial robots. The project was supervised by Raimon Bullich Vilarrubias and Oscar Guerrero Rosado.
 
 ---
 
@@ -92,5 +92,7 @@ Adjust `config.ini` to change the MMGC configuration (number of gains, gain step
 For questions or collaborations, please contact:
 
 📧 Tom Schwierz — Tom.Schwierz@outlook.de
-📧 Oscar Guerrero Rosado — guerrerorosado.o@gmail.com
-🌐 [oscarguerrerorosado.github.io](https://oscarguerrerorosado.github.io/)
+
+📧 Raimon Bullich Vilarrubias — raimonbullich8@gmail.com
+
+📧 Oscar Guerrero Rosado — guerrerorosado.o@gmail.com 🌐 [oscarguerrerorosado.github.io](https://oscarguerrerorosado.github.io/)
