@@ -30,7 +30,8 @@ GridUAV/
 │
 ├── Experiments/
 │   ├── config.ini               # Experiment configuration (MMGC gains, noise levels, flight duration, etc.)
-│   └── LaunchExp1.bat           # Launch script for running an experiment
+│   ├── LaunchVelNoise.bat       # Launch script for running the VelNoise experiment
+	└── Utils.py 				 # Utility functions (e.g. save_experiment_data())
 │
 ├── RobotControl/
 │   ├── 3DGridModel.py           # MMGC attractor network implementation
