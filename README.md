@@ -80,7 +80,7 @@ pip install -r requirements.txt
 
 ```bash
 cd Experiments
-./LaunchExp1.bat
+LaunchVelNoise.bat
 ```
 
 Adjust `config.ini` to change the MMGC configuration (number of gains, gain step), injected activity noise, or flight duration before launching a new run.
