@@ -50,6 +50,9 @@ class UAVControl:
         """
         Process a cartesian target position and drive the motors.
 
+        Convenience wrapper that reads sensors then acts. Prefer sense() + act()
+        when the caller already needs sensor data before computing a target.
+
         Args:
             target: [x, y] or [x, y, z] in the global frame.
                 Interpreted as relative or absolute per relative_position.
@@ -57,7 +60,35 @@ class UAVControl:
         Returns:
             dict: Current UAV sensor readings from get_sensor_data().
         """
+        self.sense()
+        return self.act(target)
+
+    def sense(self):
+        """
+        Read sensors without commanding the motors.
+
+        Useful for bootstrapping state before the first navigation update.
+
+        Returns:
+            dict: Current UAV sensor readings from get_sensor_data().
+        """
         self._read_sensors()
+        return self.get_sensor_data()
+
+    def act(self, target):
+        """
+        Drive the motors from a target using the latest sense() readings.
+
+        Must be called after sense() in the same simulation step so that
+        sensors are read exactly once (avoids dt=0 and exploded D-terms).
+
+        Args:
+            target: [x, y] or [x, y, z] in the global frame.
+                Interpreted as relative or absolute per relative_position.
+
+        Returns:
+            dict: Current UAV sensor readings from get_sensor_data().
+        """
         target_pos = self._resolve_target(target)
         motor_speeds = self._compute_motor_speeds(target_pos)
         self._set_motors(motor_speeds)
@@ -83,6 +114,31 @@ class UAVControl:
             "yaw_rate": self.yaw_rate,
             "acceleration_body": np.array([self.ax, self.ay, self.az]),
             "acceleration_linear": self.linear_acceleration.copy(),
+        }
+
+    def get_lidar_scan(self):
+        """
+        Return the latest lidar range image and sensor metadata.
+
+        Returns:
+            dict: Keys include ranges, horizontal_resolution, number_of_layers,
+                fov, vertical_fov, min_range, and max_range. ranges is empty
+                when no image is available yet.
+        """
+        range_image = self.lidar.getRangeImage()
+        ranges = (
+            np.asarray(range_image, dtype=float)
+            if range_image is not None
+            else np.array([], dtype=float)
+        )
+        return {
+            "ranges": ranges,
+            "horizontal_resolution": int(self.lidar.getHorizontalResolution()),
+            "number_of_layers": int(self.lidar.getNumberOfLayers()),
+            "fov": float(self.lidar.getFov()),
+            "vertical_fov": float(self.lidar.getVerticalFov()),
+            "min_range": float(self.lidar.getMinRange()),
+            "max_range": float(self.lidar.getMaxRange()),
         }
 
     def _init_motors(self):
@@ -111,6 +167,8 @@ class UAVControl:
         self.acc.enable(timestep)
         self.lidar = self.robot.getDevice("lidar")
         self.lidar.enable(timestep)
+        if hasattr(self.lidar, "enablePointCloud"):
+            self.lidar.enablePointCloud()
 
     def _init_pid_state(self):
         """Reset PID error accumulators and integrators to their initial values."""
@@ -125,6 +183,7 @@ class UAVControl:
         self.yaw_integrator = 0.0
         self.prev_altitude = None
         self.hover_speed = 55.35
+        self._pid_seeded = False
 
     def _init_pid_gains(self):
         """Set default PID gain values for velocity, attitude, and altitude control."""
@@ -274,6 +333,14 @@ class UAVControl:
 
         vx_error = desired_vx - actual_vx
         vy_error = desired_vy - actual_vy
+        yaw_error = (desired_yaw - self.yaw + np.pi) % (2 * np.pi) - np.pi
+
+        if not self._pid_seeded:
+            # First cycle: seed previous errors so derivative terms start at zero.
+            self.prev_vx_error = vx_error
+            self.prev_vy_error = vy_error
+            self.prev_yaw_error = yaw_error
+
         vx_deriv = (vx_error - self.prev_vx_error) / dt
         vy_deriv = (vy_error - self.prev_vy_error) / dt
 
@@ -286,7 +353,6 @@ class UAVControl:
             - self.gains["kd_vel_xy"] * vy_deriv
         )
 
-        yaw_error = (desired_yaw - self.yaw + np.pi) % (2 * np.pi) - np.pi
         yaw_deriv = (yaw_error - self.prev_yaw_error) / dt
         self.yaw_integrator += yaw_error * dt
         yaw_rate_command = (
@@ -300,8 +366,13 @@ class UAVControl:
         self.prev_yaw_error = yaw_error
 
         pitch_error = desired_pitch - self.pitch
-        pitch_deriv = (pitch_error - self.prev_pitch_error) / dt
         roll_error = desired_roll - self.roll
+
+        if not self._pid_seeded:
+            self.prev_pitch_error = pitch_error
+            self.prev_roll_error = roll_error
+
+        pitch_deriv = (pitch_error - self.prev_pitch_error) / dt
         roll_deriv = (roll_error - self.prev_roll_error) / dt
         yaw_rate_error = yaw_rate_command - self.yaw_rate
 
@@ -341,6 +412,11 @@ class UAVControl:
         alt_error = desired_altitude - self.altitude
         desired_vz = self.gains["k_alt"] * alt_error
         vz_error = desired_vz - vertical_velocity
+
+        if not self._pid_seeded:
+            self.prev_vz_error = vz_error
+            self._pid_seeded = True
+
         vz_deriv = (vz_error - self.prev_vz_error) / dt
         self.altitude_integrator_vz += vz_error * dt
         self.prev_vz_error = vz_error

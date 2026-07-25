@@ -14,8 +14,8 @@ WorldInfo {
   FPS 30
 }
 Viewpoint {
-  orientation 0.5731956407837681 0.5798792984169596 -0.5789531558372754 2.0819049757802945
-  position -0.06125694068701287 0.04051476013544089 9.902302443358899
+  orientation -0.5198845519712638 0.3914571564791522 0.7592636875703295 2.1028931851027974
+  position 1.7309209787361217 -3.7204077386581087 9.51558438522899
   follow "Crazyflie"
   followType "Mounted Shot"
 }
@@ -34,6 +34,11 @@ DEF Crazyflie Crazyflie {
   controller "<extern>"
   supervisor TRUE
   extensionSlot [
+    Lidar {
+      fieldOfView 3.14
+      verticalFieldOfView 3.141592653589793
+      numberOfLayers 10
+    }
     InertialUnit {
       name "imu"
     }

@@ -32,9 +32,8 @@ from RobotControl.navigation_patterns import PATTERN_REGISTRY, NavigationPattern
 DEFAULT_BOUNDARIES = np.array([
     [-2.8, 2.8],
     [-2.8, 2.8],
-    [0.3, 2.8],
+    [-2.8, 2.8],
 ])
-
 
 class Navigation:
     """Facade that delegates movement generation to a swappable pattern."""

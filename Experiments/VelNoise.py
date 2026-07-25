@@ -1,14 +1,17 @@
 ﻿import ast
 import configparser
+import sys
 from pathlib import Path
-
-from controller import Robot
-from controller import Supervisor
 
 from Utils import *
 
 GridUAV_path = str(Path(__file__).parents[1])
 print('Repository main folder -> {}'.format(GridUAV_path))
+
+if GridUAV_path not in sys.path:
+	sys.path.insert(0, GridUAV_path)
+
+from RobotControl.WebotsController import WebotsController
 
 parameters = configparser.ConfigParser()
 parameters.read(GridUAV_path + '/Experiments/config.ini')
@@ -45,7 +48,9 @@ class VelNoise_Experiment():
 
 
 	def main_experiment_loop(self):
-		# Do stuffs
+		# Simulation ownership (Robot + time loop) lives in WebotsController.
+		webots = WebotsController(sim_time=self.sim_time)
+		webots.run()
 
 		# Finish and save
 		save_experiment_data(GridUAV_path, self.exp_label)
@@ -53,11 +58,6 @@ class VelNoise_Experiment():
 
 
 def main(args=None):
-	robot = Robot()
-	supervisor = Supervisor()
-	robot_node = supervisor.getFromDef("Crazyflie")
-	trans_field = robot_node.getField("translation")
-
 	experiment = VelNoise_Experiment()
 	experiment.main_experiment_loop()
 
