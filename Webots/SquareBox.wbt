@@ -15,9 +15,9 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.5198845519712638 0.3914571564791522 0.7592636875703295 2.1028931851027974
-  position 1.7309209787361217 -3.7204077386581087 9.51558438522899
+  position 1.6684974281280478 -3.5033316350268624 8.933226513983286
   follow "Crazyflie"
-  followType "Mounted Shot"
+  followType "None"
 }
 TexturedBackground {
 }
@@ -31,6 +31,7 @@ Floor {
   }
 }
 DEF Crazyflie Crazyflie {
+  translation 0 0 -2.9
   controller "<extern>"
   supervisor TRUE
   extensionSlot [

@@ -36,6 +36,10 @@ class VelNoise_Experiment():
 		self.n_gains = ast.literal_eval(parameters.get('GridConfig', 'n_gains'))
 		self.gain_spacing = ast.literal_eval(parameters.get('GridConfig', 'gain_spacing'))
 
+		self.movement_pattern = parameters.get(
+			'Movement_pattern', 'Movement_pattern', fallback='random_3d'
+		).strip() or 'random_3d'
+
 		print("trials_per_setting parameter -> {}".format(self.trials_per_setting))
 		print("sim_time parameter -> {}".format(self.sim_time))
 		print("noise_vel parameter -> {}".format(self.noise_vel))
@@ -44,12 +48,13 @@ class VelNoise_Experiment():
 		print("starting_gain parameter -> {}".format(self.starting_gain))
 		print("n_gains parameter -> {}".format(self.n_gains))
 		print("gain_spacing parameter -> {}".format(self.gain_spacing))
+		print("Movement_pattern parameter -> {}".format(self.movement_pattern))
 
 
 
 	def main_experiment_loop(self):
 		# Simulation ownership (Robot + time loop) lives in WebotsController.
-		webots = WebotsController(sim_time=self.sim_time)
+		webots = WebotsController(sim_time=self.sim_time, pattern=self.movement_pattern)
 		webots.run()
 
 		# Finish and save

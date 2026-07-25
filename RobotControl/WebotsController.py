@@ -45,6 +45,7 @@ class WebotsController:
 
     def __init__(
         self,
+        initial_position=np.array([0.0, 0.0, -2.9]),
         sim_time=10.0,
         relative_position=False,
         navigation=None,
@@ -52,10 +53,12 @@ class WebotsController:
     ):
         """
         Args:
+            initial_position: Initial position of the UAV in the world frame.
             sim_time: Default flight duration in seconds for run().
             relative_position: Shared absolute/relative target mode for UAV and Navigation.
             navigation: Optional pre-built Navigation instance.
-            **nav_kwargs: Forwarded to Navigation when navigation is None.
+            **nav_kwargs: Forwarded to Navigation when navigation is None
+                (e.g. pattern; defaults to random_3d if omitted).
         """
         # Supervisor subclasses Robot; one instance owns the extern controller link.
         self.robot = Supervisor()
@@ -63,6 +66,8 @@ class WebotsController:
         self.trans_field = (
             self.robot_node.getField("translation") if self.robot_node is not None else None
         )
+        self.trans_field.setSFVec3f(initial_position)
+        self.robot_node.resetPhysics()
 
         self.timestep = int(self.robot.getBasicTimeStep())
         self.sim_time = float(sim_time)
